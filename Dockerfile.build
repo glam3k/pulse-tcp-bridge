@@ -1,0 +1,23 @@
+# Use a specific Go version for reproducibility
+FROM golang:1.22-bookworm
+
+# Add amd64 architecture to install amd64 libraries
+RUN dpkg --add-architecture amd64
+
+# Install build dependencies, including libpulse for CGo for both architectures,
+# the amd64 C cross-compiler, and its corresponding C libraries.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Native build tools
+    gcc \
+    libpulse-dev \
+    # Cross-compilation tools for amd64
+    gcc-x86-64-linux-gnu \
+    libc6-dev-amd64-cross \
+    libpulse-dev:amd64 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+
+
